@@ -36,6 +36,15 @@ router.get("/allTweets/:username", (req, res) => {
   });
 });
 
+/*Récupere le nombre de tweet par user */
+router.get("/numberTweet/:username", (req, res) => {
+  User.findOne({ username: req.params.username }).then((data) => {
+    if (data) {
+      res.json({ result: true, data: data.tweets.length });
+    }
+  });
+});
+
 /* Récupere tout les tweets de tous les utilisateurs */
 router.get("/allTweets", (req, res) => {
   User.find().then((data) => {
