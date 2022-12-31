@@ -13,6 +13,15 @@ router.get("/all", function (req, res, next) {
   });
 });
 
+/*Get One user by token */
+router.get("/user/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data) {
+      res.json({ result: true, data: data.username });
+    }
+  });
+});
+
 router.post("/signup", (req, res) => {
   if (!checkBody(req.body, ["username", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
