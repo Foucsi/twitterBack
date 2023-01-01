@@ -13,6 +13,29 @@ router.post("/addTweets/:username", (req, res) => {
   });
 });
 
+/*enregister en base de donné si le tweet es liké ou pas */
+router.post("/isLiked/:tweet", (req, res) => {
+  User.findOneAndUpdate(
+    // Cherchez l'utilisateur qui a posté le tweet
+    { "tweets.tweet": req.params.tweet },
+    // Ajoutez le like à la liste de likes du tweet
+    { $push: { "tweets.$.isliked": { liked: req.body.liked } } },
+    // Retournez le document modifié au lieu du document d'origine
+    { returnOriginal: false }
+  ).then((data) => {
+    // Vérifiez si l'utilisateur a été trouvé et mis à jour
+    if (data) {
+      // Trouvez le tweet dans la liste de tweets de l'utilisateur
+      const tweet = data.tweets.find((e) => e.tweet === req.params.tweet);
+      // Renvoyez le tweet avec les données mises à jour
+      res.json({ result: true, data: tweet });
+    } else {
+      // Gérez l'erreur ici
+      res.json({ result: false });
+    }
+  });
+});
+
 /*Supprime un tweet avec le parametre username */
 router.delete("/removeTweets/:username", (req, res) => {
   User.findOneAndUpdate(
